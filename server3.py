@@ -1,22 +1,4 @@
-################################################################################
-#
-#  Permission is hereby granted, free of charge, to any person obtaining a
-#  copy of this software and associated documentation files (the "Software"),
-#  to deal in the Software without restriction, including without limitation
-#  the rights to use, copy, modify, merge, publish, distribute, sublicense,
-#  and/or sell copies of the Software, and to permit persons to whom the
-#  Software is furnished to do so, subject to the following conditions:
-#
-#  The above copyright notice and this permission notice shall be included in
-#  all copies or substantial portions of the Software.
-#
-#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-#  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-#  DEALINGS IN THE SOFTWARE.
+
 
 #from itertools import izip
 from random    import normalvariate, random
@@ -54,36 +36,6 @@ FREQ = (12,    36,   50)
 # Trades
 
 OVERLAP = 4
-
-################################################################################
-#
-# Test Data
-
-def bwalk(min, max, std):
-    """ Generates a bounded random walk. """
-    rng = max - min
-    while True:
-        max += normalvariate(0, std)
-        yield abs((max % (rng * 2)) - rng) + min
-
-def market(t0 = MARKET_OPEN):
-    """ Generates a random series of market conditions,
-        (time, price, spread).
-    """
-    for hours, px, spd in zip(bwalk(*FREQ), bwalk(*PX), bwalk(*SPD)):
-        yield t0, px, spd
-        t0 += timedelta(hours = abs(hours))
-
-def orders(hist):
-    """ Generates a random set of limit orders (time, side, price, size) from
-        a series of market conditions.
-    """
-    for t, px, spd in hist:
-        stock = 'ABC' if random() > 0.5 else 'DEF'
-        side, d  = ('sell', 2) if random() > 0.5 else ('buy', -2)
-        order = round(normalvariate(px + (spd / d), spd / OVERLAP), 2)
-        size  = int(abs(normalvariate(0, 100)))
-        yield t, stock, side, order, size
 
 
 ################################################################################
@@ -139,9 +91,9 @@ def order_book(orders, book, stock_name):
 
 ################################################################################
 #
-# Test Data Persistence
+#  read data from csv  or Generete Manual Test data
 
-def generate_csv():
+def generate_csv():              # Generete Manual Test data
     """ Generate a CSV of order history. """
     with open('test.csv', 'wb') as f:
         writer = csv.writer(f)
@@ -238,11 +190,11 @@ class App(object):
     def __init__(self):
         self._book_1    = dict()
         self._book_2    = dict()
-        self._data_1    = order_book(read_csv(), self._book_1, 'ABC')
+        self._data_1    = order_book(read_csv(), self._book_1, 'ABC')  # order_book and read_csv
         self._data_2    = order_book(read_csv(), self._book_2, 'DEF')
         self._rt_start = datetime.now()
         self._sim_start, _, _  = next(self._data_1)
-        self.read_10_first_lines()
+        self.read_10_first_lines()                                     #read data1 and data 2
 
     @property
     def _current_book_1(self):
@@ -318,3 +270,57 @@ if __name__ == '__main__':
         print ("No data found, generating...")
         generate_csv()
     run(App())
+
+
+
+################################################################################
+
+#   Manual -Test Data
+
+def bwalk(min, max, std):
+    """ Generates a bounded random walk. """
+    rng = max - min
+    while True:
+        max += normalvariate(0, std)
+        yield abs((max % (rng * 2)) - rng) + min
+
+def market(t0 = MARKET_OPEN):
+    """ Generates a random series of market conditions,
+        (time, price, spread).
+    """
+    for hours, px, spd in zip(bwalk(*FREQ), bwalk(*PX), bwalk(*SPD)):
+        yield t0, px, spd
+        t0 += timedelta(hours = abs(hours))
+
+def orders(hist):
+    """ Generates a random set of limit orders (time, side, price, size) from
+        a series of market conditions.
+    """
+    for t, px, spd in hist:
+        stock = 'ABC' if random() > 0.5 else 'DEF'
+        side, d  = ('sell', 2) if random() > 0.5 else ('buy', -2)
+        order = round(normalvariate(px + (spd / d), spd / OVERLAP), 2)
+        size  = int(abs(normalvariate(0, 100)))
+        yield t, stock, side, order, size
+
+
+
+################################################################################
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a
+#  copy of this software and associated documentation files (the "Software"),
+#  to deal in the Software without restriction, including without limitation
+#  the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#  and/or sell copies of the Software, and to permit persons to whom the
+#  Software is furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+#  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#  DEALINGS IN THE SOFTWARE.
