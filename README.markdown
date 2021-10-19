@@ -8,7 +8,7 @@ This repository contains the submitted patch files of the various tasks assigned
 
 ## My Certificate of Completion
 
-![](https://github.com/tjjohn000/JPMorgan_Internship_Task1/blob/master/Capture.png)
+![](https://github.com/tjjohn000/JPMorgan_Internship_Task1/master/Capture.png)
 
 ## For any queries/doubts:
 
